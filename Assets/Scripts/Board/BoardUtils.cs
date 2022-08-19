@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum NeighborhoodID
@@ -108,6 +109,37 @@ public class MapUtils
             TileID.LaBellaLuna => GameObject.Find("LaBellaLuna"),
             TileID.ArkhamAsylum => GameObject.Find("ArkhamAsylum"),
             _ => null
+        };
+    }
+}
+
+public enum ActionID
+{
+    Move,
+    GatherResources,
+    Focus,
+    Ward,
+    Attack,
+    Evade,
+    Research,
+    Trade
+}
+
+public class ActionUtils
+{
+    public static string EnumToString(Enum name)
+    {
+        return name switch
+        {
+            ActionID.Move => "Move",
+            ActionID.GatherResources => "Gather Resources",
+            ActionID.Focus => "Focus",
+            ActionID.Ward => "Ward",
+            ActionID.Attack => "Attack",
+            ActionID.Evade => "Evade",
+            ActionID.Research => "Research",
+            ActionID.Trade => "Trade",
+            _ => throw new ArgumentOutOfRangeException(nameof(name), name, null)
         };
     }
 }

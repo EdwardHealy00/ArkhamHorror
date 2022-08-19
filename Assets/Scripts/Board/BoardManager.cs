@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class BoardManager : MonoBehaviour
 {
@@ -9,13 +11,53 @@ public class BoardManager : MonoBehaviour
     public int numberOfPlayers = 2;
     public List<Investigator> investigators;
     public GameObject startingTile;
-    public GameObject investigatorPrefab;
+    [SerializeField] private GameObject investigatorPrefab;
+    [SerializeField] private GameObject actionPanel;
+
+    public static Dictionary<ActionID, Action> ActionTriggers = new Dictionary<ActionID, Action>()
+    {
+        {ActionID.Move, TriggerMove},
+        {ActionID.GatherResources, TriggerGatherResources},
+        {ActionID.Focus, TriggerFocus},
+        {ActionID.Ward, TriggerWard},
+        {ActionID.Attack, TriggerAttack},
+        {ActionID.Evade, TriggerEvade},
+        {ActionID.Research, TriggerResearch},
+        {ActionID.Trade, TriggerTrade}
+    };
 
     // Start is called before the first frame update
     void Start()
     {
         CreateApproachOfAzatothMap();
         CreateInvestigators();
+        StartGame();
+    }
+
+    private void StartGame()
+    {
+        DoActionPhase();
+    }
+
+    private void DoActionPhase()
+    {
+        actionPanel.SetActive(true);
+        //DoMonsterPhase();
+    }
+
+    private void DoMonsterPhase()
+    {
+        DoEncounterPhase();
+    }
+
+    private void DoEncounterPhase()
+    {
+        DoMythosPhase();
+    }
+
+    private void DoMythosPhase()
+    {
+        DoActionPhase();
     }
 
     // Update is called once per frame
@@ -37,7 +79,7 @@ public class BoardManager : MonoBehaviour
 
         Board = new Board(neighborhoods);
         Board.Neighborhoods[NeighborhoodID.Streets] = CreateStreets();
-        startingTile = GameObject.Find("TrainStation");
+        startingTile = MapUtils.EnumToGameObject(TileID.TrainStation);
         System.Console.WriteLine("BOARD GENERATED");
     }
     
@@ -202,4 +244,48 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
+
+    #region ActionTriggers
+
+    private static void TriggerTrade()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static void TriggerResearch()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static void TriggerEvade()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static void TriggerAttack()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static void TriggerWard()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static void TriggerFocus()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static void TriggerGatherResources()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static void TriggerMove()
+    {
+        Debug.Log("CA MARCHE");
+    }
+
+    #endregion
 }

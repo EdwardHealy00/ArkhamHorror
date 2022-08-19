@@ -1,23 +1,25 @@
-using System.Collections;
 using System.Collections.Generic;
 
-public class InvestigatorUtils 
+namespace Investigators
 {
-    public enum SkillID
+    public class InvestigatorUtils 
     {
-        Lore,
-        Influence,
-        Observation,
-        Strength,
-        Will
-    }
+        public enum SkillID
+        {
+            Lore,
+            Influence,
+            Observation,
+            Strength,
+            Will
+        }
     
-    public enum InvestigatorID
-    {
-        Lore,
-        Influence,
-        Observation,
-        Strength,
-        Will
+        public enum InvestigatorID
+        {
+            Lore,
+            Influence,
+            Observation,
+            Strength,
+            Will
+        }
     }
 }
