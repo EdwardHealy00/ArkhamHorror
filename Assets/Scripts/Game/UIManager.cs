@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Investigators;
 using TMPro;
 using UnityEngine;
@@ -8,20 +10,19 @@ namespace Game
     public class UIManager : MonoBehaviour
     {
         [SerializeField] private Button buttonPrefab;
-        [SerializeField] private GameObject actionPanel;
+        public GameObject actionPanel;
         // Start is called before the first frame update
         void Start()
         {
-            CreateActionPanel();
         }
 
-        private void CreateActionPanel()
+        public void CreateActionPanel(Dictionary<ActionID, Action> actionTriggers)
         {
-            foreach (var actionId in BoardManager.ActionTriggers.Keys)
+            foreach (var actionId in actionTriggers.Keys)
             {
                 var button = Instantiate(buttonPrefab, actionPanel.transform);
                 button.GetComponentInChildren<TMP_Text>().text = ActionUtils.EnumToString(actionId);
-                button.onClick.AddListener(() =>  BoardManager.ActionTriggers[actionId].Invoke());
+                button.onClick.AddListener(() =>  actionTriggers[actionId].Invoke());
             }
         }
 
