@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Investigators;
 using UnityEngine;
 
 namespace Game
@@ -7,16 +8,25 @@ namespace Game
     public class GameManager : MonoBehaviour
     {
 
-        [SerializeField] private GameObject board;
-        [SerializeField] private GameObject canvas;
-        private BoardManager _boardManager;
-        private UIManager _uiManager;
-        
+        [SerializeField] private BoardManager board;
+        [SerializeField] private UIManager canvas;
+        [SerializeField] private InvestigatorManager investigatorManager;
+
+
         public Dictionary<ActionID, Action> ActionTriggers;
+        
+        public int numberOfPlayers = 2;
+        public Dictionary<InvestigatorID, Investigator> investigators;
+        public Investigator currentInvestigator;
+        public ActionID currentAction = ActionID.None;
 
         // Start is called before the first frame update
         void Start()
         {
+            investigatorManager.CreateInvestigators();
+            FetchStartingInvestigators();
+            board.CreateApproachOfAzatothMap();
+            board.SpawnInvestigators(investigators);
             ActionTriggers = new Dictionary<ActionID, Action>()
             {
                 {ActionID.Move, TriggerMove},
@@ -28,10 +38,18 @@ namespace Game
                 {ActionID.Research, TriggerResearch},
                 {ActionID.Trade, TriggerTrade}
             };
-            _boardManager = board.GetComponent<BoardManager>();
-            _uiManager = canvas.GetComponent<UIManager>();
-            _uiManager.CreateActionPanel(ActionTriggers);
+            canvas.CreateActionPanel(ActionTriggers);
             StartGame();
+        }
+        
+        public void FetchStartingInvestigators()
+        {
+            investigators = new Dictionary<InvestigatorID, Investigator>
+            {
+                [InvestigatorID.RookieCop] = investigatorManager.Investigators[InvestigatorID.RookieCop],
+                [InvestigatorID.Secretary] = investigatorManager.Investigators[InvestigatorID.Secretary],
+            };
+            currentInvestigator = investigators[InvestigatorID.RookieCop];
         }
 
         // Update is called once per frame
@@ -47,7 +65,7 @@ namespace Game
 
         private void DoActionPhase()
         {
-            _uiManager.actionPanel.SetActive(true);
+            canvas.actionPanel.SetActive(true);
             //DoMonsterPhase();
         }
 
@@ -105,9 +123,10 @@ namespace Game
             throw new NotImplementedException();
         }
 
-        private void TriggerMove()
+        public void TriggerMove()
         {
-            _boardManager.inMoveAction = true;
+            currentAction = ActionID.Move;
+            board.ShortestPath = board.FindShortestPath(currentInvestigator.Tile);
         }
 
         #endregion

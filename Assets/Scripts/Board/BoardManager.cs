@@ -2,159 +2,176 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Game;
+using Investigators;
+using Unity.VisualScripting;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class BoardManager : MonoBehaviour
 {
     public Board Board;
-    public int numberOfPlayers = 2;
-    public List<Investigator> investigators;
-    private GameObject startingTile;
+    public Tile startingTile;
+    public Func<Tile, List<Tile>> ShortestPath;
+    private List<Tile> _highlightedPath = new List<Tile>();
+    [SerializeField] private GameManager game;
     [SerializeField] private GameObject investigatorPrefab;
 
-    public bool inMoveAction = false;
+    public bool IsValidPath => _highlightedPath.Count() <= game.currentInvestigator.MoveLimit;
 
     // Start is called before the first frame update
     void Start()
     {
-        CreateApproachOfAzatothMap();
-        CreateInvestigators();
     }
 
-   
+    public void SpawnInvestigators(Dictionary<InvestigatorID, Investigator> investigators)
+    {
+        foreach (var (_, investigator) in investigators)
+        {
+            var pawn = Instantiate(investigatorPrefab, startingTile.CenterPos);
+            pawn.GetComponent<SpriteRenderer>().sprite = investigator.GetSprite();
+            investigator.Pawn = pawn;
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    private void CreateApproachOfAzatothMap()
+
+    public void CreateApproachOfAzatothMap()
     {
         var neighborhoods = new Dictionary<NeighborhoodID, Neighborhood>()
         {
-            {NeighborhoodID.Northside, CreateNorthsideNeighborhood() },
-            {NeighborhoodID.MerchantDistrict, CreateMerchantsDistrictNeighborhood() },
-            {NeighborhoodID.Easttown, CreateEasttownNeighborhood() },
-            {NeighborhoodID.Rivertown, CreateRivertownNeighborhood() },
-            {NeighborhoodID.Downtown, CreateDowntownNeighborhood() }
+            {NeighborhoodID.Northside, CreateNorthsideNeighborhood()},
+            {NeighborhoodID.MerchantDistrict, CreateMerchantDistrictNeighborhood()},
+            {NeighborhoodID.Easttown, CreateEasttownNeighborhood()},
+            {NeighborhoodID.Rivertown, CreateRivertownNeighborhood()},
+            {NeighborhoodID.Downtown, CreateDowntownNeighborhood()}
         };
-
-        Board = new Board(neighborhoods);
+        var tiles = GetAllTiles(neighborhoods);
+        Board = new Board(neighborhoods, tiles);
         Board.Neighborhoods[NeighborhoodID.Streets] = CreateStreets();
-        startingTile = MapUtils.EnumToGameObject(TileID.TrainStation);
-        System.Console.WriteLine("BOARD GENERATED");
-    }
-    
-    private void CreateInvestigators()
-    {
-        investigators = new List<Investigator>();
-        for (int i = 0; i < numberOfPlayers; i++)
-        {
-            CreateInvestigator();
-        }
-    }
 
-    private void CreateInvestigator()
-    {
-        Instantiate(investigatorPrefab, startingTile.transform.Find("Center"));
+        startingTile = MapUtils.EnumToGameObject(TileID.TrainStation).GetComponent<Tile>();
+        startingTile.Investigators.AddRange(game.investigators);
+        foreach (var investigator in game.investigators)
+        {
+            investigator.Value.Tile = startingTile;
+        }
     }
 
     #region Create Neighborhoods
 
     private Neighborhood CreateNorthsideNeighborhood()
     {
+        var neighborhood = transform.Find("Northside");
         var tiles = new Dictionary<TileID, Tile>
         {
-            { TileID.ArkhamAdvertiser, new Tile(new Location(NeighborhoodID.Northside, TileID.ArkhamAdvertiser)) },
-            { TileID.TrainStation, new Tile(new Location(NeighborhoodID.Northside, TileID.TrainStation)) },
-            { TileID.CuriositieShoppe, new Tile(new Location(NeighborhoodID.Northside, TileID.CuriositieShoppe)) }
+            {TileID.ArkhamAdvertiser, neighborhood.Find("ArkhamAdvertiser").GetComponent<Tile>()},
+            {TileID.TrainStation, neighborhood.Find("TrainStation").GetComponent<Tile>()},
+            {TileID.CuriositieShoppe, neighborhood.Find("CuriositieShoppe").GetComponent<Tile>()}
         };
         ConnectTilesWithinNeighborhood(ref tiles);
-        
+
         return new Neighborhood(NeighborhoodID.Northside, tiles);
     }
-    private Neighborhood CreateMerchantsDistrictNeighborhood()
+
+    private Neighborhood CreateMerchantDistrictNeighborhood()
     {
+        var neighborhood = transform.Find("MerchantDistrict");
         var tiles = new Dictionary<TileID, Tile>
         {
-            { TileID.UnvisitedIsle, new Tile(new Location(NeighborhoodID.MerchantDistrict, TileID.UnvisitedIsle)) },
-            { TileID.TickTockClub, new Tile(new Location(NeighborhoodID.MerchantDistrict, TileID.TickTockClub)) },
-            { TileID.RiverDocks, new Tile(new Location(NeighborhoodID.MerchantDistrict, TileID.RiverDocks)) }
+            {TileID.UnvisitedIsle, neighborhood.Find("UnvisitedIsle").GetComponent<Tile>()},
+            {TileID.TickTockClub, neighborhood.Find("TickTockClub").GetComponent<Tile>()},
+            {TileID.RiverDocks, neighborhood.Find("RiverDocks").GetComponent<Tile>()}
         };
         ConnectTilesWithinNeighborhood(ref tiles);
-        
+
         return new Neighborhood(NeighborhoodID.MerchantDistrict, tiles);
     }
+
     private Neighborhood CreateEasttownNeighborhood()
     {
+        var neighborhood = transform.Find("Easttown");
         var tiles = new Dictionary<TileID, Tile>
         {
-            { TileID.VelmasDiner, new Tile(new Location(NeighborhoodID.Easttown, TileID.VelmasDiner)) },
-            { TileID.HibbsRoadhouse, new Tile(new Location(NeighborhoodID.Easttown, TileID.HibbsRoadhouse)) },
-            { TileID.PoliceStation, new Tile(new Location(NeighborhoodID.Easttown, TileID.PoliceStation)) }
+            {TileID.VelmasDiner, neighborhood.Find("VelmasDiner").GetComponent<Tile>()},
+            {TileID.HibbsRoadhouse, neighborhood.Find("HibbsRoadhouse").GetComponent<Tile>()},
+            {TileID.PoliceStation, neighborhood.Find("PoliceStation").GetComponent<Tile>()}
         };
         ConnectTilesWithinNeighborhood(ref tiles);
-        
+
         return new Neighborhood(NeighborhoodID.Easttown, tiles);
     }
+
     private Neighborhood CreateRivertownNeighborhood()
     {
+        var neighborhood = transform.Find("Rivertown");
         var tiles = new Dictionary<TileID, Tile>
         {
-            { TileID.BlackCave, new Tile(new Location(NeighborhoodID.Rivertown, TileID.BlackCave)) },
-            { TileID.Graveyard, new Tile(new Location(NeighborhoodID.Rivertown, TileID.Graveyard)) },
-            { TileID.GeneralStore, new Tile(new Location(NeighborhoodID.Rivertown, TileID.GeneralStore)) }
+            {TileID.BlackCave, neighborhood.Find("BlackCave").GetComponent<Tile>()},
+            {TileID.Graveyard, neighborhood.Find("Graveyard").GetComponent<Tile>()},
+            {TileID.GeneralStore, neighborhood.Find("GeneralStore").GetComponent<Tile>()}
         };
         ConnectTilesWithinNeighborhood(ref tiles);
-        
+
         return new Neighborhood(NeighborhoodID.Rivertown, tiles);
     }
+
     private Neighborhood CreateDowntownNeighborhood()
     {
+        var neighborhood = transform.Find("Downtown");
         var tiles = new Dictionary<TileID, Tile>
         {
-            { TileID.IndependenceSquare, new Tile(new Location(NeighborhoodID.Downtown, TileID.IndependenceSquare)) },
-            { TileID.LaBellaLuna, new Tile(new Location(NeighborhoodID.Downtown, TileID.LaBellaLuna)) },
-            { TileID.ArkhamAsylum, new Tile(new Location(NeighborhoodID.Downtown, TileID.ArkhamAsylum)) }
+            {TileID.IndependenceSquare, neighborhood.Find("IndependenceSquare").GetComponent<Tile>()},
+            {TileID.LaBellaLuna, neighborhood.Find("LaBellaLuna").GetComponent<Tile>()},
+            {TileID.ArkhamAsylum, neighborhood.Find("ArkhamAsylum").GetComponent<Tile>()}
         };
         ConnectTilesWithinNeighborhood(ref tiles);
-        
+
         return new Neighborhood(NeighborhoodID.Downtown, tiles);
     }
-    
+
     private Neighborhood CreateStreets()
     {
         var tiles = new Dictionary<TileID, Tile>
         {
-            { TileID.Urban1, new Tile(new Location(NeighborhoodID.Streets, TileID.Urban1)) },
-            { TileID.Urban2, new Tile(new Location(NeighborhoodID.Streets, TileID.Urban2)) },
-            { TileID.Urban3, new Tile(new Location(NeighborhoodID.Streets, TileID.Urban3)) },
-            { TileID.Forest1, new Tile(new Location(NeighborhoodID.Streets, TileID.Forest1)) },
-            { TileID.Forest2, new Tile(new Location(NeighborhoodID.Streets, TileID.Forest2)) },
-            { TileID.Bridge1, new Tile(new Location(NeighborhoodID.Streets, TileID.Bridge1)) },
-            { TileID.Bridge2, new Tile(new Location(NeighborhoodID.Streets, TileID.Bridge2)) }
+            {TileID.Urban1, transform.Find("Urban1").Find("Urban1").GetComponent<Tile>()},
+            {TileID.Urban2, transform.Find("Urban2").Find("Urban2").GetComponent<Tile>()},
+            {TileID.Urban3, transform.Find("Urban3").Find("Urban3").GetComponent<Tile>()},
+            {TileID.Forest1, transform.Find("Forest1").Find("Forest1").GetComponent<Tile>()},
+            {TileID.Forest2, transform.Find("Forest2").Find("Forest2").GetComponent<Tile>()},
+            {TileID.Bridge1, transform.Find("Bridge1").Find("Bridge1").GetComponent<Tile>()},
+            {TileID.Bridge2, transform.Find("Bridge2").Find("Bridge2").GetComponent<Tile>()}
         };
 
+        Board.Tiles.AddRange(tiles);
+
         #region Connect Streets to Neighborhoods
-        
+
         tiles[TileID.Urban1].AdjacentTiles.Add(TileID.ArkhamAsylum);
         tiles[TileID.Urban1].AdjacentTiles.Add(TileID.LaBellaLuna);
         tiles[TileID.Urban1].AdjacentTiles.Add(TileID.UnvisitedIsle);
         Board.Neighborhoods[NeighborhoodID.Downtown].Tiles[TileID.ArkhamAsylum].AdjacentTiles.Add(TileID.Urban1);
         Board.Neighborhoods[NeighborhoodID.Downtown].Tiles[TileID.LaBellaLuna].AdjacentTiles.Add(TileID.Urban1);
-        Board.Neighborhoods[NeighborhoodID.MerchantDistrict].Tiles[TileID.UnvisitedIsle].AdjacentTiles.Add(TileID.Urban1);
+        Board.Neighborhoods[NeighborhoodID.MerchantDistrict].Tiles[TileID.UnvisitedIsle].AdjacentTiles
+            .Add(TileID.Urban1);
 
         tiles[TileID.Urban2].AdjacentTiles.Add(TileID.UnvisitedIsle);
         tiles[TileID.Urban2].AdjacentTiles.Add(TileID.TickTockClub);
         tiles[TileID.Urban2].AdjacentTiles.Add(TileID.BlackCave);
         tiles[TileID.Urban2].AdjacentTiles.Add(TileID.GeneralStore);
-        Board.Neighborhoods[NeighborhoodID.MerchantDistrict].Tiles[TileID.UnvisitedIsle].AdjacentTiles.Add(TileID.Urban2);
-        Board.Neighborhoods[NeighborhoodID.MerchantDistrict].Tiles[TileID.TickTockClub].AdjacentTiles.Add(TileID.Urban2);
+        Board.Neighborhoods[NeighborhoodID.MerchantDistrict].Tiles[TileID.UnvisitedIsle].AdjacentTiles
+            .Add(TileID.Urban2);
+        Board.Neighborhoods[NeighborhoodID.MerchantDistrict].Tiles[TileID.TickTockClub].AdjacentTiles
+            .Add(TileID.Urban2);
         Board.Neighborhoods[NeighborhoodID.Rivertown].Tiles[TileID.BlackCave].AdjacentTiles.Add(TileID.Urban2);
         Board.Neighborhoods[NeighborhoodID.Rivertown].Tiles[TileID.GeneralStore].AdjacentTiles.Add(TileID.Urban2);
-        
+
 
         tiles[TileID.Urban3].AdjacentTiles.Add(TileID.LaBellaLuna);
         tiles[TileID.Urban3].AdjacentTiles.Add(TileID.VelmasDiner);
@@ -164,40 +181,41 @@ public class BoardManager : MonoBehaviour
         Board.Neighborhoods[NeighborhoodID.Downtown].Tiles[TileID.LaBellaLuna].AdjacentTiles.Add(TileID.Urban3);
         Board.Neighborhoods[NeighborhoodID.Easttown].Tiles[TileID.VelmasDiner].AdjacentTiles.Add(TileID.Urban3);
         Board.Neighborhoods[NeighborhoodID.Easttown].Tiles[TileID.PoliceStation].AdjacentTiles.Add(TileID.Urban3);
-        
+
         tiles[TileID.Forest1].AdjacentTiles.Add(TileID.ArkhamAdvertiser);
         tiles[TileID.Forest1].AdjacentTiles.Add(TileID.TrainStation);
         tiles[TileID.Forest1].AdjacentTiles.Add(TileID.ArkhamAsylum);
         Board.Neighborhoods[NeighborhoodID.Northside].Tiles[TileID.ArkhamAdvertiser].AdjacentTiles.Add(TileID.Forest1);
         Board.Neighborhoods[NeighborhoodID.Northside].Tiles[TileID.TrainStation].AdjacentTiles.Add(TileID.Forest1);
         Board.Neighborhoods[NeighborhoodID.Downtown].Tiles[TileID.ArkhamAsylum].AdjacentTiles.Add(TileID.Forest1);
-        
+
         tiles[TileID.Forest2].AdjacentTiles.Add(TileID.TrainStation);
         tiles[TileID.Forest2].AdjacentTiles.Add(TileID.UnvisitedIsle);
         tiles[TileID.Forest2].AdjacentTiles.Add(TileID.RiverDocks);
         Board.Neighborhoods[NeighborhoodID.Northside].Tiles[TileID.TrainStation].AdjacentTiles.Add(TileID.Forest2);
-        Board.Neighborhoods[NeighborhoodID.MerchantDistrict].Tiles[TileID.UnvisitedIsle].AdjacentTiles.Add(TileID.Forest2);
+        Board.Neighborhoods[NeighborhoodID.MerchantDistrict].Tiles[TileID.UnvisitedIsle].AdjacentTiles
+            .Add(TileID.Forest2);
         Board.Neighborhoods[NeighborhoodID.MerchantDistrict].Tiles[TileID.RiverDocks].AdjacentTiles.Add(TileID.Forest2);
-        
+
         tiles[TileID.Bridge1].AdjacentTiles.Add(TileID.PoliceStation);
         tiles[TileID.Bridge1].AdjacentTiles.Add(TileID.BlackCave);
         tiles[TileID.Bridge1].AdjacentTiles.Add(TileID.Graveyard);
         Board.Neighborhoods[NeighborhoodID.Rivertown].Tiles[TileID.BlackCave].AdjacentTiles.Add(TileID.Bridge1);
         Board.Neighborhoods[NeighborhoodID.Rivertown].Tiles[TileID.Graveyard].AdjacentTiles.Add(TileID.Bridge1);
         Board.Neighborhoods[NeighborhoodID.Easttown].Tiles[TileID.PoliceStation].AdjacentTiles.Add(TileID.Bridge1);
-        
+
         tiles[TileID.Bridge2].AdjacentTiles.Add(TileID.LaBellaLuna);
         tiles[TileID.Bridge2].AdjacentTiles.Add(TileID.BlackCave);
         Board.Neighborhoods[NeighborhoodID.Rivertown].Tiles[TileID.BlackCave].AdjacentTiles.Add(TileID.Bridge2);
         Board.Neighborhoods[NeighborhoodID.Downtown].Tiles[TileID.LaBellaLuna].AdjacentTiles.Add(TileID.Bridge2);
 
         #endregion
-        
+
         return new Neighborhood(NeighborhoodID.Streets, tiles);
     }
 
     #endregion
-    
+
     private void ConnectTilesWithinNeighborhood(ref Dictionary<TileID, Tile> tiles)
     {
         foreach (var tile in tiles)
@@ -208,5 +226,88 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
-    
+
+    private Dictionary<TileID, Tile> GetAllTiles(Dictionary<NeighborhoodID, Neighborhood> neighborhoods)
+    {
+        var tiles = new Dictionary<TileID, Tile>();
+        foreach (var neighborhood in neighborhoods)
+        {
+            tiles.AddRange(neighborhood.Value.Tiles);
+        }
+
+        return tiles;
+    }
+
+    public void ShowPath(Tile destTile)
+    {
+        foreach (var tile in _highlightedPath) tile.UnselectTile();
+        _highlightedPath = ShortestPath.Invoke(destTile);
+        foreach (var tile in _highlightedPath) tile.SelectTile();
+    }
+
+    public Func<Tile, List<Tile>> FindShortestPath(Tile start)
+    {
+        var previous = new Dictionary<TileID, Tile>();
+
+        var queue = new Queue<Tile>();
+        queue.Enqueue(start);
+
+        while (queue.Count > 0)
+        {
+            var tile = queue.Dequeue();
+            foreach (var neighbor in tile.AdjacentTiles)
+            {
+                if (previous.ContainsKey(neighbor))
+                    continue;
+
+                previous[neighbor] = tile;
+                queue.Enqueue(Board.Tiles[neighbor]);
+            }
+        }
+
+        List<Tile> Path(Tile v)
+        {
+            var path = new List<Tile> { };
+
+            var current = v;
+            while (!current.Equals(start))
+            {
+                path.Add(current);
+                current = previous[current.ID];
+            }
+
+            path.Reverse();
+
+            return path;
+        }
+
+        return Path;
+    }
+
+    public void RemoveHighlightedPath()
+    {
+        foreach (var tile in _highlightedPath) tile.UnselectTile();
+        _highlightedPath = new List<Tile>();
+    }
+
+    public void MoveActionInvestigator(Tile tile)
+    {
+        var investigator = game.currentInvestigator;
+        if (tile.ID == investigator.Tile.ID) return;
+
+        if (ShortestPath(tile).Count <= investigator.MoveLimit)
+        {
+            Move(investigator, tile);
+            RemoveHighlightedPath();
+            game.currentAction = ActionID.None;
+        }
+    }
+
+    private void Move(Investigator investigator, Tile tile)
+    {
+        investigator.Tile.Investigators.Remove(investigator.ID);
+        tile.Investigators[investigator.ID] = investigator;
+        investigator.Tile = tile;
+        investigator.Pawn.transform.position = tile.CenterPos.position;
+    }
 }

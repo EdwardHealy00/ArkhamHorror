@@ -2,9 +2,7 @@ using System.Collections.Generic;
 
 namespace Investigators
 {
-    public class InvestigatorUtils 
-    {
-        public enum SkillID
+    public enum SkillID
         {
             Lore,
             Influence,
@@ -13,13 +11,19 @@ namespace Investigators
             Will
         }
     
-        public enum InvestigatorID
+    public enum InvestigatorID
         {
-            Lore,
-            Influence,
-            Observation,
-            Strength,
-            Will
+            Dilettante,
+            Waitress,
+            Entertainer,
+            Mobster,
+            Urchin,
+            Astronomer,
+            Reporter,
+            Mechanic,
+            Haunted,
+            Magician,
+            Secretary,
+            RookieCop
         }
-    }
 }

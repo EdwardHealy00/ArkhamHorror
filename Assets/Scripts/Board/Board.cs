@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 
 public class Board
 {
     public readonly Dictionary<NeighborhoodID, Neighborhood> Neighborhoods;
+    public readonly Dictionary<TileID, Tile> Tiles;
     public int TotalDoom => Neighborhoods.Sum(neighborhood => neighborhood.Value.DoomAmount);
 
-    public Board(Dictionary<NeighborhoodID, Neighborhood> neighborhoods)
+    public Board(Dictionary<NeighborhoodID, Neighborhood> neighborhoods, Dictionary<TileID, Tile> tiles)
     {
         Neighborhoods = neighborhoods;
+        Tiles = tiles;
     }
 }
 
@@ -18,7 +21,7 @@ public class Neighborhood
     public readonly NeighborhoodID NeighborhoodID;
     public readonly Dictionary<TileID, Tile> Tiles;
     private int ClueAmount { get; set; }
-    public int DoomAmount => Tiles.Sum(tile => tile.Value.DoomAmount);
+    public int DoomAmount => Tiles.Sum(tile => tile.Value.doomAmount);
     private bool HasAnomaly { get; set; }
 
     public Neighborhood(NeighborhoodID id, Dictionary<TileID, Tile> tiles)
@@ -30,26 +33,6 @@ public class Neighborhood
     }
 }
 
-public class Tile
-{
-    //public List<Monster> monsters;
-    //public List<Investigator> investigators;
-    public int DoomAmount { get; }
-    public readonly HashSet<TileID> AdjacentTiles;
-
-
-    public string Name => MapUtils.EnumToString(_location.TileID);
-    public string Neighborhood => MapUtils.EnumToString(_location.NeighborhoodID);
-    
-    private readonly Location _location;
-
-    public Tile(Location location)
-    {
-        _location = location;
-        DoomAmount = 0;
-        AdjacentTiles = new HashSet<TileID>();
-    }
-}
 
 public readonly struct Location
 {

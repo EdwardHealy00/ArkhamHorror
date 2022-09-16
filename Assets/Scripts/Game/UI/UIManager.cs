@@ -11,6 +11,7 @@ namespace Game
     {
         [SerializeField] private Button buttonPrefab;
         public GameObject actionPanel;
+        
         // Start is called before the first frame update
         void Start()
         {
@@ -26,7 +27,7 @@ namespace Game
             }
         }
 
-        private void FooOnClick()
+        public void FooOnClick()
         {
             Debug.Log("Ta-Da!");
         }

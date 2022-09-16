@@ -75,7 +75,89 @@ public class MapUtils
             TileID.IndependenceSquare => "Independence Square",
             TileID.LaBellaLuna => "La Bella Luna",
             TileID.ArkhamAsylum => "Arkham Asylum",
+            
+            TileID.Urban1 => "Urban Street",
+            TileID.Urban2 => "Urban Street",
+            TileID.Urban3 => "Urban Street",
+            TileID.Forest1 => "Forest Street",
+            TileID.Forest2 => "Forest Street",
+            TileID.Bridge1 => "Bridge Street",
+            TileID.Bridge2 => "Bridge Street",
             _ => "Unknown Location"
+        };
+    }
+    
+    public static NeighborhoodID GetNeighborhoodForTile(TileID tile)
+    {
+        switch(tile)
+        {
+            case TileID.ArkhamAdvertiser:
+            case TileID.TrainStation: 
+            case TileID.CuriositieShoppe: 
+                return NeighborhoodID.Northside;
+            case TileID.IndependenceSquare:
+            case TileID.ArkhamAsylum: 
+            case TileID.LaBellaLuna: 
+                return NeighborhoodID.Downtown;
+            case TileID.UnvisitedIsle:
+            case TileID.TickTockClub: 
+            case TileID.RiverDocks: 
+                return NeighborhoodID.MerchantDistrict;
+            case TileID.BlackCave:
+            case TileID.GeneralStore: 
+            case TileID.Graveyard: 
+                return NeighborhoodID.Rivertown;
+            case TileID.HibbsRoadhouse:
+            case TileID.VelmasDiner: 
+            case TileID.PoliceStation: 
+                return NeighborhoodID.Easttown;
+            case TileID.Urban1:
+            case TileID.Urban2:
+            case TileID.Urban3:
+            case TileID.Forest1:
+            case TileID.Forest2:
+            case TileID.Bridge1:
+            case TileID.Bridge2:
+                return NeighborhoodID.Streets;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(tile), tile, null);
+        };
+    }
+    
+    public static TileID StringToEnum(String name)
+    {
+        return name switch
+        {
+            "ArkhamAdvertiser" => TileID.ArkhamAdvertiser,
+            "TrainStation" => TileID.TrainStation,
+            "CuriositieShoppe" => TileID.CuriositieShoppe,
+            
+            "UnvisitedIsle" => TileID.UnvisitedIsle,
+            "TickTockClub" => TileID.TickTockClub,
+            "RiverDocks" => TileID.RiverDocks,
+            
+            "VelmasDiner" => TileID.VelmasDiner,
+            "HibbsRoadhouse" => TileID.HibbsRoadhouse,
+            "PoliceStation" => TileID.PoliceStation,
+            
+            "BlackCave" => TileID.BlackCave,
+            "Graveyard" => TileID.Graveyard,
+            "GeneralStore" => TileID.GeneralStore,
+            
+            "IndependenceSquare" => TileID.IndependenceSquare,
+            "LaBellaLuna" => TileID.LaBellaLuna,
+            "ArkhamAsylum" => TileID.ArkhamAsylum,
+            
+            "Urban1" => TileID.Urban1,
+            "Urban2" => TileID.Urban2,
+            "Urban3" => TileID.Urban3,
+            
+            "Forest1" => TileID.Forest1,
+            "Forest2" => TileID.Forest2,
+            
+            "Bridge1" => TileID.Bridge1,
+            "Bridge2" => TileID.Bridge2,
+            _ => throw new ArgumentOutOfRangeException(nameof(name), name, null)
         };
     }
     
@@ -115,6 +197,7 @@ public class MapUtils
 
 public enum ActionID
 {
+    None,
     Move,
     GatherResources,
     Focus,
@@ -131,6 +214,7 @@ public class ActionUtils
     {
         return name switch
         {
+            ActionID.None => "None",
             ActionID.Move => "Move",
             ActionID.GatherResources => "Gather Resources",
             ActionID.Focus => "Focus",
