@@ -50,6 +50,8 @@ namespace Game
                 [InvestigatorID.Secretary] = investigatorManager.Investigators[InvestigatorID.Secretary],
             };
             currentInvestigator = investigators[InvestigatorID.RookieCop];
+
+            canvas.UpdateInvestigatorsPanel(investigators);
         }
 
         // Update is called once per frame
@@ -130,5 +132,16 @@ namespace Game
         }
 
         #endregion
+
+        public void ApplyAction()
+        {
+            switch (currentAction)
+            {
+                case ActionID.Move: board.MoveActionInvestigator();
+                    break;
+            }
+
+            currentAction = ActionID.None;
+        }
     }
 }

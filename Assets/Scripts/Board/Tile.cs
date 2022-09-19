@@ -9,11 +9,14 @@ public class Tile: MonoBehaviour
 {
     [HideInInspector] public Transform CenterPos;
     private Material _greenMaterial;
+    private Material _greenOpaqueMaterial;
     private Material _redMaterial;
     private Material _transparentMaterial;
     public MeshRenderer _meshRenderer;
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private GameManager gameManager;
+
+    public bool selected = false;
     
     //public List<Monster> monsters;
     //public List<Investigator> investigators;
@@ -35,6 +38,7 @@ public class Tile: MonoBehaviour
         CenterPos = transform.Find("Center");
         _meshRenderer = GetComponent<MeshRenderer>();
         _greenMaterial = Resources.Load("Materials/Selected", typeof(Material)) as Material;
+        _greenOpaqueMaterial = Resources.Load("Materials/OpaqueSelected", typeof(Material)) as Material;
         _redMaterial = Resources.Load("Materials/Error", typeof(Material)) as Material;      
         _transparentMaterial = Resources.Load("Materials/InvisibleFace", typeof(Material)) as Material;
     }
@@ -43,7 +47,7 @@ public class Tile: MonoBehaviour
     {
         if (gameManager.currentAction == ActionID.Move)
         {
-            boardManager.ShowPath(this);
+            boardManager.ShowHoverPath(this);
         }
     }
 
@@ -51,7 +55,7 @@ public class Tile: MonoBehaviour
     {
         if (gameManager.currentAction == ActionID.Move)
         {
-            boardManager.RemoveHighlightedPath();
+            boardManager.RemoveHoverPath();
         }
     }
     
@@ -59,17 +63,36 @@ public class Tile: MonoBehaviour
     {
         if (gameManager.currentAction == ActionID.Move)
         {
-            boardManager.MoveActionInvestigator(this);
+            if (selected)
+            {
+                boardManager.RemoveTilesToMoveAction(this);
+                boardManager.ShowHoverPath(this);
+            }
+            else { boardManager.AddTilesToMoveAction(this);}
         }
     }
 
+    public void HoverTile()
+    {
+        if (selected) return;
+        _meshRenderer.material = boardManager.IsValidPath ? _greenMaterial : _redMaterial;
+    }
+
+    public void UnhoverTile()
+    {
+        if (selected) return;
+        _meshRenderer.material = _transparentMaterial;
+    }
+    
     public void SelectTile()
     {
-        _meshRenderer.material = boardManager.IsValidPath ? _greenMaterial : _redMaterial;
+        selected = true;
+        _meshRenderer.material = _greenOpaqueMaterial;
     }
     
     public void UnselectTile()
     {
-        _meshRenderer.material = _transparentMaterial;
+        selected = false;
+        UnhoverTile();
     }
 }

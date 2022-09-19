@@ -14,10 +14,12 @@ public class BoardManager : MonoBehaviour
     public Tile startingTile;
     public Func<Tile, List<Tile>> ShortestPath;
     private List<Tile> _highlightedPath = new List<Tile>();
+    private List<Tile> _pendingMovePath = new List<Tile>();
+    
     [SerializeField] private GameManager game;
     [SerializeField] private GameObject investigatorPrefab;
 
-    public bool IsValidPath => _highlightedPath.Count() <= game.currentInvestigator.MoveLimit;
+    public bool IsValidPath => _pendingMovePath.Count() + _highlightedPath.Count() <= game.currentInvestigator.MoveLimit;
 
     // Start is called before the first frame update
     void Start()
@@ -238,11 +240,11 @@ public class BoardManager : MonoBehaviour
         return tiles;
     }
 
-    public void ShowPath(Tile destTile)
+    public void ShowHoverPath(Tile destTile)
     {
-        foreach (var tile in _highlightedPath) tile.UnselectTile();
+        foreach (var tile in _highlightedPath) tile.UnhoverTile();
         _highlightedPath = ShortestPath.Invoke(destTile);
-        foreach (var tile in _highlightedPath) tile.SelectTile();
+        foreach (var tile in _highlightedPath) tile.HoverTile();
     }
 
     public Func<Tile, List<Tile>> FindShortestPath(Tile start)
@@ -284,23 +286,54 @@ public class BoardManager : MonoBehaviour
         return Path;
     }
 
-    public void RemoveHighlightedPath()
+    public void RemoveHoverPath()
     {
-        foreach (var tile in _highlightedPath) tile.UnselectTile();
-        _highlightedPath = new List<Tile>();
+        foreach (var tile in _highlightedPath)
+        {
+            if (!tile.selected)
+            {
+                tile.UnhoverTile();
+            }
+        }
+        _highlightedPath.Clear();
     }
 
-    public void MoveActionInvestigator(Tile tile)
+    public void MoveActionInvestigator()
     {
+        if (!_pendingMovePath.Any()) return;
+        
         var investigator = game.currentInvestigator;
+        var tile = _pendingMovePath.Last();
         if (tile.ID == investigator.Tile.ID) return;
 
         if (ShortestPath(tile).Count <= investigator.MoveLimit)
         {
             Move(investigator, tile);
-            RemoveHighlightedPath();
-            game.currentAction = ActionID.None;
+            RemoveTilesToMoveAction(tile);
         }
+    }
+    
+    public void AddTilesToMoveAction(Tile destTile)
+    {
+        if (!IsValidPath) return;
+        
+        _pendingMovePath.AddRange(_highlightedPath);
+        _highlightedPath.Clear();
+        foreach (var tile in _pendingMovePath)
+        {
+            tile.SelectTile();
+        }
+        ShortestPath = FindShortestPath(destTile);
+    }
+    
+    public void RemoveTilesToMoveAction(Tile destTile)
+    {
+        foreach (var tile in _pendingMovePath)
+        {
+            tile.UnselectTile();
+        }
+        _pendingMovePath.Clear();
+        ShortestPath = FindShortestPath(game.currentInvestigator.Tile);
     }
 
     private void Move(Investigator investigator, Tile tile)

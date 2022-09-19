@@ -9,8 +9,11 @@ namespace Game
 {
     public class UIManager : MonoBehaviour
     {
+        [SerializeField] private GameManager game;
         [SerializeField] private Button buttonPrefab;
+        [SerializeField] private Button portraitPrefab;
         public GameObject actionPanel;
+        public GameObject investigatorsPanel;
         
         // Start is called before the first frame update
         void Start()
@@ -37,7 +40,16 @@ namespace Game
         {
         
         }
-    
-    
+
+
+        public void UpdateInvestigatorsPanel(Dictionary<InvestigatorID, Investigator> investigators)
+        {
+            foreach (var investigator in investigators.Values)
+            {
+                var button = Instantiate(portraitPrefab, investigatorsPanel.transform);
+                button.GetComponentInChildren<Image>().sprite = investigator.GetSprite();
+                button.onClick.AddListener(() => game.currentInvestigator = investigator);
+            }
+        }
     }
 }
