@@ -268,7 +268,6 @@ GameObject:
   - component: {fileID: 6708650603822792605}
   - component: {fileID: 6708650603822792600}
   - component: {fileID: 6708650603822792603}
-  - component: {fileID: 6708650603822792602}
   m_Layer: 5
   m_Name: ActionPanel
   m_TagString: Untagged
@@ -334,32 +333,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6708650603822792602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 8297152528748653361, guid: d06fdf042c184324e872f1f1c758b0a5, type: 3}
-  m_PrefabInstance: {fileID: 3331681232774567081}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6708650603822792604}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 20
-    m_Bottom: 20
-  m_ChildAlignment: 1
-  m_Spacing: 30
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!1 &6708650604124083129
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,8 +449,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bfc0abb3a62b8443b5a0f44768581d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  game: {fileID: 0}
   buttonPrefab: {fileID: 1486956374734774970, guid: f90f6f8f1fb405847a40559ce7d53be8, type: 3}
+  portraitPrefab: {fileID: 0}
   actionPanel: {fileID: 6708650603822792604}
+  investigatorsPanel: {fileID: 0}
 --- !u!222 &6708650604124083139
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -534,6 +510,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   board: {fileID: 6708650604056559440}
   canvas: {fileID: 6708650604124083138}
+  investigatorManager: {fileID: 0}
   numberOfPlayers: 2
   currentAction: 0
 --- !u!1001 &3331681232774567081
