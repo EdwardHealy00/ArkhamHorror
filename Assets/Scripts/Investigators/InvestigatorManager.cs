@@ -96,7 +96,7 @@ namespace Investigators
             throw new System.NotImplementedException();
         }
 
-        private static Dictionary<SkillID, Skill> AssignSkills(int lore, int influence, int observation, int strength, int will)
+        private static Dictionary<SkillID, Skill> AssignSkills(uint lore, uint influence, uint observation, uint strength, uint will)
         {
             return new Dictionary<SkillID, Skill>
             {

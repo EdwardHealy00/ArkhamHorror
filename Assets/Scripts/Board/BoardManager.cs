@@ -311,6 +311,8 @@ public class BoardManager : MonoBehaviour
             Move(investigator, tile);
             RemoveTilesToMoveAction(tile);
         }
+
+        game.currentInvestigator.ActionsDoneThisTurn[ActionID.Move] = true; // TODO Bind with radio buttons
     }
     
     public void AddTilesToMoveAction(Tile destTile)

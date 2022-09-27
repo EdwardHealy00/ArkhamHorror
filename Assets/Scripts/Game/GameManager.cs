@@ -50,8 +50,20 @@ namespace Game
                 [InvestigatorID.Secretary] = investigatorManager.Investigators[InvestigatorID.Secretary],
             };
             currentInvestigator = investigators[InvestigatorID.RookieCop];
-
-            canvas.UpdateInvestigatorsPanel(investigators);
+            canvas.CreateInvestigatorsPanel(investigators);
+        }
+        
+        public Investigator GetNextInvestigator()
+        {
+            foreach (var investigator in investigators.Values)
+            {
+                if (investigator.ActionsLeftThisTurn != 0)
+                {
+                    return investigator;
+                }
+            }
+            EndActionPhase(); // All players have played their turn
+            return null;
         }
 
         // Update is called once per frame
@@ -67,13 +79,23 @@ namespace Game
 
         private void DoActionPhase()
         {
+            foreach (var investigator in investigators.Values)
+            {
+                investigator.ResetActionsForNewTurn();
+            }
+            
             canvas.actionPanel.SetActive(true);
-            //DoMonsterPhase();
+        }
+        
+        private void EndActionPhase()
+        {
+            canvas.actionPanel.SetActive(false);
+            DoMonsterPhase();
         }
 
         private void DoMonsterPhase()
         {
-            DoEncounterPhase();
+            //DoEncounterPhase();
         }
 
         private void DoEncounterPhase()
@@ -117,12 +139,13 @@ namespace Game
 
         private void TriggerFocus()
         {
-            throw new NotImplementedException();
+            currentAction = ActionID.Focus;
+            
         }
 
         private void TriggerGatherResources()
         {
-            throw new NotImplementedException();
+            currentAction = ActionID.GatherResources;
         }
 
         public void TriggerMove()
@@ -137,11 +160,59 @@ namespace Game
         {
             switch (currentAction)
             {
-                case ActionID.Move: board.MoveActionInvestigator();
+                case ActionID.Move: ApplyMove();
                     break;
+                case ActionID.GatherResources: ApplyGatherResources();
+                    break;
+                case ActionID.None: return;
             }
-
+            currentInvestigator.ActionsLeftThisTurn--;
+            canvas.ApplyAction(currentInvestigator);
             currentAction = ActionID.None;
         }
+
+        #region ActionApplied
+        
+        private void ApplyTrade()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ApplyResearch()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ApplyEvade()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ApplyAttack()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ApplyWard()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ApplyFocus()
+        {
+            throw new NotImplementedException();
+        }
+        private void ApplyMove()
+        {
+            board.MoveActionInvestigator();
+        }
+
+        private void ApplyGatherResources()
+        {
+            currentInvestigator.Dollars++;
+            canvas.RefreshInvestigatorPanel(currentInvestigator);
+        }
+        
+        #endregion
     }
 }

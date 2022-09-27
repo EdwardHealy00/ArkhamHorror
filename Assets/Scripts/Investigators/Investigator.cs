@@ -12,23 +12,28 @@ namespace Investigators
     public class Investigator
     {
         public InvestigatorID ID;
-        public string Name;
+        public string Name => InvestigatorUtils.InvestigatorIDtoName(ID);
+        public string Class => InvestigatorUtils.InvestigatorIDtoClass(ID);
         public Health Health;
         public Dictionary<SkillID, Skill> Skills;
         public Dictionary<AssetID, Asset> Assets;
         public int FocusLimit;
-        public int FocusAmount => Skills.Sum(skill => skill.Value.TimesFocused);
-        public int Dollars;
-        public int Remnants;
-        public int MoveLimit = 2;
-        public int ActionLimit = 2;
-        [HideInInspector] public int ActionLeftThisTurn = 2;
-        public int FocusLimitPerSkill = 1;
+        public uint FocusAmount => (uint) Skills.Sum(skill => skill.Value.TimesFocused);
+        public uint Dollars;
+        public uint Remnants;
+        public uint Clues = 0;
+        public uint MoveLimit = 2;
+        public uint ActionLimit = 2;
+        [HideInInspector] public uint ActionsLeftThisTurn = 2;
+        #region ActionsDoneThisTurn 
+        [HideInInspector] public Dictionary<ActionID, bool> ActionsDoneThisTurn = new Dictionary<ActionID, bool>   {{ActionID.Move, false}, {ActionID.GatherResources, false}, {ActionID.Attack, false}, {ActionID.Evade, false}, {ActionID.Research, false}, {ActionID.Ward, false}, {ActionID.Trade, false}, {ActionID.Focus, false}}; 
+        #endregion
+        public uint FocusLimitPerSkill = 1;
         
         [HideInInspector]public Tile Tile;
         [HideInInspector] public GameObject Pawn;
 
-        public Investigator(InvestigatorID investigatorID, Health health, Dictionary<SkillID, Skill> skills, Dictionary<AssetID, Asset> startingPossessions, int focusLimit, int dollars)
+        public Investigator(InvestigatorID investigatorID, Health health, Dictionary<SkillID, Skill> skills, Dictionary<AssetID, Asset> startingPossessions, int focusLimit, uint dollars)
         {
             ID = investigatorID;
             Health = health;
@@ -36,6 +41,13 @@ namespace Investigators
             Assets = startingPossessions;
             FocusLimit = focusLimit;
             Dollars = dollars;
+        }
+
+        bool CanFocusSkill(SkillID skillId)
+        {
+            if (FocusAmount >= FocusLimit) return false;
+            if (Skills[skillId].TimesFocused < FocusLimitPerSkill) return false;
+            return true;
         }
 
         void FocusSkill(SkillID skillId)
@@ -76,15 +88,24 @@ namespace Investigators
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
+        
+        public void ResetActionsForNewTurn()
+        {
+            ActionsLeftThisTurn = ActionLimit;
+            foreach (var actionID in ActionsDoneThisTurn.Keys.ToList())
+            {
+                 ActionsDoneThisTurn[actionID] = false;
+            }
+        }
     }
 
     public class Skill
     {
-        public int TimesFocused;
-        public int Value;
+        public uint TimesFocused;
+        public uint Value;
         public SkillID SkillID;
 
-        public Skill(SkillID skillId, int value)
+        public Skill(SkillID skillId, uint value)
         {
             TimesFocused = 0;
             Value = value;
