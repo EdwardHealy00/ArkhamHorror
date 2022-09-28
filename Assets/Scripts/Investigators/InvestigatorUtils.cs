@@ -69,6 +69,19 @@ namespace Investigators
                 _ => throw new ArgumentOutOfRangeException(nameof(id), id, null)
             };
         }
+        
+        public static SkillID SkillNameToID(string name)
+        {
+            return name switch
+            {
+                "Lore" => SkillID.Lore,
+                "Influence" => SkillID.Influence,
+                "Observation" => SkillID.Observation, 
+                "Strength" => SkillID.Strength,
+                "Will" => SkillID.Will,
+                _ => throw new ArgumentOutOfRangeException(nameof(name), name, null)
+            };
+        }
     }
     
 }

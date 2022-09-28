@@ -43,14 +43,14 @@ namespace Investigators
             Dollars = dollars;
         }
 
-        bool CanFocusSkill(SkillID skillId)
+        public bool CanFocusSkill(SkillID skillId)
         {
             if (FocusAmount >= FocusLimit) return false;
             if (Skills[skillId].TimesFocused < FocusLimitPerSkill) return false;
             return true;
         }
 
-        void FocusSkill(SkillID skillId)
+        public void FocusSkill(SkillID skillId)
         {
             if (Skills[skillId].TimesFocused < FocusLimitPerSkill)
             {
@@ -58,7 +58,7 @@ namespace Investigators
             }
         }
     
-        void UnfocusSkill(SkillID skillId)
+        public void UnfocusSkill(SkillID skillId)
         {
             if (Skills[skillId].TimesFocused > 0)
             {

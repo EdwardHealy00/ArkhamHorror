@@ -140,7 +140,7 @@ namespace Game
         private void TriggerFocus()
         {
             currentAction = ActionID.Focus;
-            
+            canvas.focusSkillPopup.Show();
         }
 
         private void TriggerGatherResources()
@@ -163,6 +163,8 @@ namespace Game
                 case ActionID.Move: ApplyMove();
                     break;
                 case ActionID.GatherResources: ApplyGatherResources();
+                    break;
+                case ActionID.Focus: ApplyFocus();
                     break;
                 case ActionID.None: return;
             }
@@ -200,7 +202,8 @@ namespace Game
 
         private void ApplyFocus()
         {
-            throw new NotImplementedException();
+            currentInvestigator.FocusSkill(InvestigatorUtils.SkillNameToID(canvas.focusSkillPopup.selectedToggle.name));
+            canvas.RefreshInvestigatorPanel(currentInvestigator);
         }
         private void ApplyMove()
         {

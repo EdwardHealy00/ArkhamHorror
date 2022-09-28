@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Game.UI;
 using Investigators;
 using TMPro;
 using Unity.VisualScripting;
@@ -26,6 +27,7 @@ namespace Game
         public GameObject actionPanel;
         public GameObject investigatorsPanel;
         public GameObject investigatorPanel;
+        public FocusSkillPopup focusSkillPopup;
         
         private TMP_Text Name;
         private TMP_Text Class;
