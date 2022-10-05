@@ -142,7 +142,7 @@ namespace Game
                 ResetAllToggles(actionToggles.Values.ToList());
                 return;
             }
-            actionToggles[game.currentAction].interactable = false;
+            //actionToggles[game.currentAction].interactable = false; TODO COMMENT IN
         }
     }
 }

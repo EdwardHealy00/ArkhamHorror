@@ -17,14 +17,14 @@ namespace Investigators
         public Health Health;
         public Dictionary<SkillID, Skill> Skills;
         public Dictionary<AssetID, Asset> Assets;
-        public int FocusLimit;
+        public uint FocusLimit;
         public uint FocusAmount => (uint) Skills.Sum(skill => skill.Value.TimesFocused);
         public uint Dollars;
         public uint Remnants;
         public uint Clues = 0;
         public uint MoveLimit = 2;
         public uint ActionLimit = 2;
-        [HideInInspector] public uint ActionsLeftThisTurn = 2;
+        [HideInInspector] public uint ActionsLeftThisTurn = 1;
         #region ActionsDoneThisTurn 
         [HideInInspector] public Dictionary<ActionID, bool> ActionsDoneThisTurn = new Dictionary<ActionID, bool>   {{ActionID.Move, false}, {ActionID.GatherResources, false}, {ActionID.Attack, false}, {ActionID.Evade, false}, {ActionID.Research, false}, {ActionID.Ward, false}, {ActionID.Trade, false}, {ActionID.Focus, false}}; 
         #endregion
@@ -33,7 +33,7 @@ namespace Investigators
         [HideInInspector]public Tile Tile;
         [HideInInspector] public GameObject Pawn;
 
-        public Investigator(InvestigatorID investigatorID, Health health, Dictionary<SkillID, Skill> skills, Dictionary<AssetID, Asset> startingPossessions, int focusLimit, uint dollars)
+        public Investigator(InvestigatorID investigatorID, Health health, Dictionary<SkillID, Skill> skills, Dictionary<AssetID, Asset> startingPossessions, uint focusLimit, uint dollars)
         {
             ID = investigatorID;
             Health = health;
@@ -52,6 +52,8 @@ namespace Investigators
 
         public void FocusSkill(SkillID skillId)
         {
+            if (skillId == SkillID.None) return;
+            
             if (Skills[skillId].TimesFocused < FocusLimitPerSkill)
             {
                 Skills[skillId].FocusSkill();
@@ -60,6 +62,8 @@ namespace Investigators
     
         public void UnfocusSkill(SkillID skillId)
         {
+            if (skillId == SkillID.None) return;
+            
             if (Skills[skillId].TimesFocused > 0)
             {
                 Skills[skillId].UnfocusSkill();

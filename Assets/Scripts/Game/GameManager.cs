@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Investigators;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
 namespace Game
@@ -23,6 +24,7 @@ namespace Game
         // Start is called before the first frame update
         void Start()
         {
+            Screen.SetResolution(2560, 1440, true);
             investigatorManager.CreateInvestigators();
             FetchStartingInvestigators();
             board.CreateApproachOfAzatothMap();
@@ -168,7 +170,7 @@ namespace Game
                     break;
                 case ActionID.None: return;
             }
-            currentInvestigator.ActionsLeftThisTurn--;
+            currentInvestigator.ActionsLeftThisTurn--; 
             canvas.ApplyAction(currentInvestigator);
             currentAction = ActionID.None;
         }
@@ -202,7 +204,15 @@ namespace Game
 
         private void ApplyFocus()
         {
-            currentInvestigator.FocusSkill(InvestigatorUtils.SkillNameToID(canvas.focusSkillPopup.selectedToggle.name));
+            var selectedPlusID = canvas.focusSkillPopup.SelectedPlusID;
+            var selectedMinusID = canvas.focusSkillPopup.SelectedMinusID;
+            
+            if(selectedPlusID != SkillID.None)
+                currentInvestigator.FocusSkill(canvas.focusSkillPopup.SelectedPlusID);
+            
+            if(selectedMinusID != SkillID.None)
+                currentInvestigator.UnfocusSkill(canvas.focusSkillPopup.SelectedMinusID);
+            
             canvas.RefreshInvestigatorPanel(currentInvestigator);
         }
         private void ApplyMove()

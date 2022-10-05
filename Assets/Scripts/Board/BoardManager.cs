@@ -341,8 +341,15 @@ public class BoardManager : MonoBehaviour
     private void Move(Investigator investigator, Tile tile)
     {
         investigator.Tile.Investigators.Remove(investigator.ID);
+        var i = 0;
+        foreach (var inv in investigator.Tile.Investigators.Values)
+        {
+            inv.Pawn.transform.position = investigator.Tile.CenterPos.position + new Vector3(1 * i, 0, 0);
+            i++;
+        }
+        
         tile.Investigators[investigator.ID] = investigator;
         investigator.Tile = tile;
-        investigator.Pawn.transform.position = tile.CenterPos.position;
+        investigator.Pawn.transform.position = tile.CenterPos.position + new Vector3(1 * (tile.Investigators.Count - 1), 0, 0);
     }
 }

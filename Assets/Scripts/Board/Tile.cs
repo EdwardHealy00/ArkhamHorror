@@ -19,7 +19,6 @@ public class Tile: MonoBehaviour
     public bool selected = false;
     
     //public List<Monster> monsters;
-    //public List<Investigator> investigators;
     public int doomAmount = 0;
     public HashSet<TileID> AdjacentTiles = new HashSet<TileID>();
     

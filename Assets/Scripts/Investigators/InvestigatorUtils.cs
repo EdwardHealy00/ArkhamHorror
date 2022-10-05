@@ -9,7 +9,8 @@ namespace Investigators
             Influence,
             Observation,
             Strength,
-            Will
+            Will,
+            None
         }
     
     public enum InvestigatorID
