@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Board;
 using Cards;
 using UnityEditor;
 using UnityEngine;
@@ -24,6 +25,7 @@ namespace Investigators
         public uint Clues = 0;
         public uint MoveLimit = 2;
         public uint ActionLimit = 2;
+        public uint minRollForSuccess = 5;
         [HideInInspector] public uint ActionsLeftThisTurn = 1;
         #region ActionsDoneThisTurn 
         [HideInInspector] public Dictionary<ActionID, bool> ActionsDoneThisTurn = new Dictionary<ActionID, bool>   {{ActionID.Move, false}, {ActionID.GatherResources, false}, {ActionID.Attack, false}, {ActionID.Evade, false}, {ActionID.Research, false}, {ActionID.Ward, false}, {ActionID.Trade, false}, {ActionID.Focus, false}}; 
@@ -91,6 +93,19 @@ namespace Investigators
                 InvestigatorID.Secretary => Resources.LoadAll<Sprite>("Sprites/Characters/8chars")[7],
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
+
+        public int DoTest(SkillID skill)
+        {
+            var numberOfSuccesses = 0;
+            for(int i = 0; i < Skills[skill].Value; i++)
+            {
+                var roll = UnityEngine.Random.Range(1, 6);
+                Debug.Log(roll);
+                if (roll >= minRollForSuccess) numberOfSuccesses++;
+            }
+            // TODO MANIPULATE DICE 490.4
+            return numberOfSuccesses;
         }
         
         public void ResetActionsForNewTurn()

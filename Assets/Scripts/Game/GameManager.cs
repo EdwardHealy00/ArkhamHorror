@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Board;
 using Investigators;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
@@ -136,7 +137,7 @@ namespace Game
 
         private void TriggerWard()
         {
-            throw new NotImplementedException();
+            currentAction = ActionID.Ward;
         }
 
         private void TriggerFocus()
@@ -168,7 +169,8 @@ namespace Game
                     break;
                 case ActionID.Focus: ApplyFocus();
                     break;
-                case ActionID.None: return;
+                case ActionID.Ward: ApplyWard();
+                    break;
             }
             currentInvestigator.ActionsLeftThisTurn--; 
             canvas.ApplyAction(currentInvestigator);
@@ -199,7 +201,15 @@ namespace Game
 
         private void ApplyWard()
         {
-            throw new NotImplementedException();
+            var result = currentInvestigator.DoTest(SkillID.Lore);
+            var tile = currentInvestigator.Tile;
+            if (result > tile.DoomAmount)
+            {
+                tile.DoomAmount = 0;
+                return;
+            }
+            tile.DoomAmount += 2;
+            //tile.DoomAmount -= result;
         }
 
         private void ApplyFocus()
