@@ -87,7 +87,7 @@ namespace Game
             if (game.currentInvestigator.ActionsLeftThisTurn != game.currentInvestigator.ActionLimit) 
                 return; //Can't change play order if one action has been done
             game.currentInvestigator = investigator;
-            ResetAllToggles(actionToggles.Values.ToList());
+            RefreshAllActionToggles();
             RefreshInvestigatorPanel(game.currentInvestigator);
         }
 
@@ -117,17 +117,24 @@ namespace Game
             Skills[4].text = investigator.Skills[SkillID.Will].Value.ToString();
         }
 
-        private void ResetAllToggles(List<Toggle> toggles)
+        public void RefreshAllActionToggles()
         {
+            var inv = game.currentInvestigator;
             actionGroup.SetAllTogglesOff();
-            foreach (var toggle in toggles)
-            {
-                toggle.interactable = true;
-            } 
+            actionToggles[ActionID.Move].interactable = !inv.ActionsDoneThisTurn[ActionID.Move] && !inv.isEngaged;
+            actionToggles[ActionID.GatherResources].interactable = !inv.ActionsDoneThisTurn[ActionID.GatherResources];
+            actionToggles[ActionID.Focus].interactable = !inv.ActionsDoneThisTurn[ActionID.Focus];
+            actionToggles[ActionID.Attack].interactable = !inv.ActionsDoneThisTurn[ActionID.Attack] && inv.isEngaged;
+            actionToggles[ActionID.Evade].interactable = !inv.ActionsDoneThisTurn[ActionID.Evade] && inv.isEngaged;
+            actionToggles[ActionID.Ward].interactable = !inv.ActionsDoneThisTurn[ActionID.Ward] && inv.Tile.DoomAmount > 0 && !inv.isEngaged;
+            actionToggles[ActionID.Research].interactable = !inv.ActionsDoneThisTurn[ActionID.Research]&& inv.Clues > 0 && !inv.isEngaged;
+            actionToggles[ActionID.Trade].interactable = !inv.ActionsDoneThisTurn[ActionID.Trade] && inv.Tile.Investigators.Count > 1 && !inv.isEngaged;
         }
 
         public void ApplyAction(Investigator currentInvestigator)
         {
+            currentInvestigator.ActionsDoneThisTurn[game.currentAction] = true;
+            RefreshAllActionToggles();
             if (currentInvestigator.ActionsLeftThisTurn == 0)
             {
                 portaitToggles[currentInvestigator.ID].interactable = false;
@@ -137,12 +144,8 @@ namespace Game
                 {
                     game.currentInvestigator = nextInvestigator;
                     portaitToggles[nextInvestigator.ID].isOn = true;
-                    
                 }
-                ResetAllToggles(actionToggles.Values.ToList());
-                return;
             }
-            //actionToggles[game.currentAction].interactable = false; TODO COMMENT IN
         }
     }
 }

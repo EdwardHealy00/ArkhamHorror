@@ -17,19 +17,20 @@ namespace Board
         [SerializeField] private GameManager gameManager;
         private TMP_Text doomCounter;
 
-        private int doomAmount = 0;
+        private uint doomAmount = 0;
         //public List<Monster> monsters;
-        public int DoomAmount
+        public uint DoomAmount
         {
             get => doomAmount;
             set
             {
                 if (Location.NeighborhoodID == NeighborhoodID.Streets) return;
                 var neighborhood = boardManager.Neighborhoods[Location.NeighborhoodID];
-                if (neighborhood.HasAnomaly)
+                if (neighborhood.HasAnomaly && value > doomAmount) // Adding doom to anomaly 
                 {
-                    int difference = DoomAmount - doomAmount;
-                    // TODO
+                    uint difference = value - doomAmount;
+                    boardManager.DoomAmount += difference;
+                    return;
                 }
                 
                 doomAmount = value;
@@ -40,8 +41,6 @@ namespace Board
                 {
                     neighborhood.TriggerAnomaly();
                 }
-                boardManager.UpdateDoomCounter();
-                
             }
         }
     

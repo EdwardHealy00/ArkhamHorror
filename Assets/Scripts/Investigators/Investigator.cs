@@ -26,6 +26,7 @@ namespace Investigators
         public uint MoveLimit = 2;
         public uint ActionLimit = 2;
         public uint minRollForSuccess = 5;
+        public bool isEngaged = false;
         [HideInInspector] public uint ActionsLeftThisTurn = 1;
         #region ActionsDoneThisTurn 
         [HideInInspector] public Dictionary<ActionID, bool> ActionsDoneThisTurn = new Dictionary<ActionID, bool>   {{ActionID.Move, false}, {ActionID.GatherResources, false}, {ActionID.Attack, false}, {ActionID.Evade, false}, {ActionID.Research, false}, {ActionID.Ward, false}, {ActionID.Trade, false}, {ActionID.Focus, false}}; 
@@ -95,9 +96,9 @@ namespace Investigators
             };
         }
 
-        public int DoTest(SkillID skill)
+        public uint DoTest(SkillID skill)
         {
-            var numberOfSuccesses = 0;
+            uint numberOfSuccesses = 0;
             for(int i = 0; i < Skills[skill].Value; i++)
             {
                 var roll = UnityEngine.Random.Range(1, 6);

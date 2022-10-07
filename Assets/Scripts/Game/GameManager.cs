@@ -13,7 +13,7 @@ namespace Game
         [SerializeField] private BoardManager board;
         [SerializeField] private UIManager canvas;
         [SerializeField] private InvestigatorManager investigatorManager;
-
+        [SerializeField] private DecksManager decksManager;
 
         public Dictionary<ActionID, Action> ActionTriggers;
         
@@ -86,8 +86,8 @@ namespace Game
             {
                 investigator.ResetActionsForNewTurn();
             }
-            
             canvas.actionPanel.SetActive(true);
+            canvas.RefreshAllActionToggles();
         }
         
         private void EndActionPhase()
@@ -122,7 +122,7 @@ namespace Game
 
         private void TriggerResearch()
         {
-            throw new NotImplementedException();
+            currentAction = ActionID.Research;
         }
 
         private void TriggerEvade()
@@ -171,6 +171,8 @@ namespace Game
                     break;
                 case ActionID.Ward: ApplyWard();
                     break;
+                case ActionID.Research: ApplyResearch();
+                    break;
             }
             currentInvestigator.ActionsLeftThisTurn--; 
             canvas.ApplyAction(currentInvestigator);
@@ -186,7 +188,15 @@ namespace Game
 
         private void ApplyResearch()
         {
-            throw new NotImplementedException();
+            var result = currentInvestigator.DoTest(SkillID.Observation);
+            if (result > currentInvestigator.Clues)
+            {
+                board.ClueAmount = currentInvestigator.Clues;
+                currentInvestigator.Clues = 0;
+                return;
+            }
+            currentInvestigator.Clues -= result;
+            board.ClueAmount += result;
         }
 
         private void ApplyEvade()
@@ -208,8 +218,7 @@ namespace Game
                 tile.DoomAmount = 0;
                 return;
             }
-            tile.DoomAmount += 2;
-            //tile.DoomAmount -= result;
+            tile.DoomAmount -= result;
         }
 
         private void ApplyFocus()

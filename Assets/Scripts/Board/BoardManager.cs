@@ -13,13 +13,35 @@ namespace Board
     {
         public Dictionary<NeighborhoodID, Neighborhood> Neighborhoods;
         public Dictionary<TileID, Tile> Tiles;
-        public int TotalDoom => Neighborhoods.Sum(neighborhood => neighborhood.Value.DoomAmount); // TODO
+
+        public uint DoomAmount
+        {
+            get => doomAmount;
+            set
+            {
+                doomAmount = value;
+                UpdateDoomCounter();
+            }
+        }
+        
+        public uint ClueAmount
+        {
+            get => clueAmount;
+            set
+            {
+                clueAmount = value;
+                UpdateClueCounter();
+            }
+        }
 
         public Tile startingTile;
         public Func<Tile, List<Tile>> ShortestPath;
         private List<Tile> _highlightedPath = new List<Tile>();
         private List<Tile> _pendingMovePath = new List<Tile>();
+        private uint doomAmount;
+        private uint clueAmount;
         private TMP_Text doomCounter;
+        private TMP_Text clueCounter;
     
         [SerializeField] private GameManager game;
         [SerializeField] private GameObject investigatorPrefab;
@@ -29,7 +51,10 @@ namespace Board
         // Start is called before the first frame update
         void Start()
         {
-            //doomCounter = gameObject.FindInChildren("TDoom").FindInChildren("DoomCounter").GetComponent<TMP_Text>(); TODO
+            doomCounter = transform.Find("ScenarioSheet").gameObject.FindInChildren("DoomCounter")
+                .GetComponent<TMP_Text>();
+            clueCounter = transform.Find("ScenarioSheet").gameObject.FindInChildren("ClueCounter")
+                .GetComponent<TMP_Text>();
         }
 
         public void SpawnInvestigators(Dictionary<InvestigatorID, Investigator> investigators)
@@ -387,8 +412,6 @@ namespace Board
                 Move(investigator, tile);
                 RemoveTilesToMoveAction(tile);
             }
-
-            game.currentInvestigator.ActionsDoneThisTurn[ActionID.Move] = true; // TODO Bind with radio buttons
         }
     
         public void AddTilesToMoveAction(Tile destTile)
@@ -429,9 +452,13 @@ namespace Board
             investigator.Pawn.transform.position = tile.CenterPos.position + new Vector3(1 * (tile.Investigators.Count - 1), 0, 0);
         }
 
-        public void UpdateDoomCounter()
+        private void UpdateDoomCounter()
         {
-            //doomCounter.text = TotalDoom.ToString(); TODO
+            doomCounter.text = DoomAmount.ToString();
+        }
+        private void UpdateClueCounter()
+        {
+            doomCounter.text = DoomAmount.ToString();
         }
     }
 }

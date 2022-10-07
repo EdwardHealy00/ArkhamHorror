@@ -170,7 +170,7 @@ namespace Game.UI
                 }
             }
         }
-        // TODO LOGIQUE QUAND PLUS ET MOINS SONT ENABLED (EMPECHER?)
+
         private void RefreshSkillValues()
         {
             var investigator = game.currentInvestigator;
