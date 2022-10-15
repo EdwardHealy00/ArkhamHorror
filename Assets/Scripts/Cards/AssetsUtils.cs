@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Investigators;
 using UnityEditor;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Cards
 {
@@ -20,6 +21,17 @@ namespace Cards
     {
         public AssetID AssetID;
         public AssetTypeID AssetTypeID;
+        private Action _onDraw;
+        private Action _onDiscard;
+        
+        public void Draw()
+        {
+            _onDraw.Invoke();
+        }
+        public void Discard()
+        {
+            _onDiscard.Invoke();
+        }
     }
 
     public class Item : Asset
@@ -28,8 +40,9 @@ namespace Cards
         public Health? Health;
         public int Cost;
         public int Hands;
+        
 
-        public Item(AssetID assetID, AssetTypeID assetTypeID, ItemTypeID itemTypeID, Health? health = null, int cost = 0, int hands = 0)
+        public Item(AssetID assetID, AssetTypeID assetTypeID, ItemTypeID itemTypeID, Action onDraw, Action onDiscard, Health? health = null, int cost = 0, int hands = 0)
         {
             AssetID = assetID;
             AssetTypeID = assetTypeID;
@@ -44,7 +57,7 @@ namespace Cards
     {
         public TalentTypeID TalentTypeID;
 
-        public Talent(AssetID assetID, AssetTypeID assetTypeID, TalentTypeID talentTypeID)
+        public Talent(AssetID assetID, AssetTypeID assetTypeID, TalentTypeID talentTypeID, Action onDraw, Action onDiscard)
         {
             AssetID = assetID;
             AssetTypeID = assetTypeID;
@@ -57,7 +70,7 @@ namespace Cards
         public AllyTypeID AllyTypeID;
         public Health Health;
 
-        public Ally(AssetID assetID, AssetTypeID assetTypeID, AllyTypeID allyTypeID, Health health)
+        public Ally(AssetID assetID, AssetTypeID assetTypeID, AllyTypeID allyTypeID, Health health, Action onDraw, Action onDiscard)
         {
             AssetID = assetID;
             AssetTypeID = assetTypeID;
@@ -71,7 +84,7 @@ namespace Cards
         public SpellTypeID SpellTypeID;
         public int Hands;
 
-        public Spell(AssetID assetID, AssetTypeID assetTypeID, SpellTypeID spellTypeID, int hands)
+        public Spell(AssetID assetID, AssetTypeID assetTypeID, SpellTypeID spellTypeID, int hands, Action onDraw, Action onDiscard)
         {
             AssetID = assetID;
             AssetTypeID = assetTypeID;
@@ -85,7 +98,7 @@ namespace Cards
         public ConditionTypeID ConditionTypeID;
         public int Hands;
 
-        public Condition(AssetID assetID, AssetTypeID assetTypeID, ConditionTypeID conditionTypeID)
+        public Condition(AssetID assetID, AssetTypeID assetTypeID, ConditionTypeID conditionTypeID, Action onDraw, Action onDiscard)
         {
             AssetID = assetID;
             AssetTypeID = assetTypeID;

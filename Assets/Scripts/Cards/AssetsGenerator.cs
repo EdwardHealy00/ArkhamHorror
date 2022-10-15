@@ -1,12 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Game;
 using Investigators;
 using UnityEngine;
 
 namespace Cards
 {
-    public static class AssetsGenerator 
+    public static class AssetsGenerator
     {
+        public static GameManager Game;
         public static Dictionary<AssetID, Asset> CreateRookieCopStartPoss()
         {
             return new()
@@ -29,27 +32,69 @@ namespace Cards
 
         private static Asset CreateBecky()
         {
-            return new Item(AssetID.Becky, AssetTypeID.Item, ItemTypeID.Weapon, new Health(2, 3), hands: 2);
+            void Trigger(object sender, EventArgs e)
+            {
+                Debug.Log("Becky");
+            }
+            void OnDraw() { Game.MoveApplied += Trigger; };
+            void OnDiscard() { Game.MoveApplied -= Trigger; }
+            
+            return new Item(AssetID.Becky, AssetTypeID.Item, ItemTypeID.Weapon, OnDraw, OnDiscard, new Health(2, 3), hands: 2);
         }
         private static Asset CreateHandcuffs()
         {
-            return new Item(AssetID.Handcuffs, AssetTypeID.Item, ItemTypeID.Common);
+            void Trigger(object sender, EventArgs e)
+            {
+                Debug.Log("Handcuffs");
+            }
+            void OnDraw() { Game.MoveApplied += Trigger; };
+            void OnDiscard() { Game.MoveApplied -= Trigger; }
+            
+            return new Item(AssetID.Handcuffs, AssetTypeID.Item, ItemTypeID.Common, OnDraw, OnDiscard);
         }
         private static Asset CreateMotorcycle()
         {
-            return new Item(AssetID.Motorcycle, AssetTypeID.Item, ItemTypeID.Vehicule);
+            void Trigger(object sender, EventArgs e)
+            {
+                Debug.Log("Motorcycle");
+            }
+            void OnDraw() { Game.MoveApplied += Trigger; };
+            void OnDiscard() { Game.MoveApplied -= Trigger; }
+
+            return new Item(AssetID.Motorcycle, AssetTypeID.Item, ItemTypeID.Vehicule, OnDraw, OnDiscard);
         }
         private static Asset CreateKingInYellow()
         {
-            return new Item(AssetID.KingInYellow, AssetTypeID.Item, ItemTypeID.CurioTome);
+            void Trigger(object sender, EventArgs e)
+            {
+                Debug.Log("King In Yellow");
+            }
+            void OnDraw() { Game.MoveApplied += Trigger; };
+            void OnDiscard() { Game.MoveApplied -= Trigger; }
+            
+            return new Item(AssetID.KingInYellow, AssetTypeID.Item, ItemTypeID.CurioTome, OnDraw, OnDiscard);
         }
         private static Asset CreateAnalyticalMind()
         {
-            return new Talent(AssetID.KingInYellow, AssetTypeID.Item, TalentTypeID.Innate);
+            void Trigger(object sender, EventArgs e)
+            {
+                Debug.Log("Analytical Mind");
+            }
+            void OnDraw() { Game.MoveApplied += Trigger; };
+            void OnDiscard() { Game.MoveApplied -= Trigger; }
+            
+            return new Talent(AssetID.KingInYellow, AssetTypeID.Item, TalentTypeID.Innate, OnDraw, OnDiscard);
         }
         private static Asset CreateSynergy()
         {
-            return new Talent(AssetID.KingInYellow, AssetTypeID.Item, TalentTypeID.Innate);
+            void Trigger(object sender, EventArgs e)
+            {
+                Debug.Log("SYNERGY");
+            }
+            void OnDraw() { Game.MoveApplied += Trigger; };
+            void OnDiscard() { Game.MoveApplied -= Trigger; }
+            
+            return new Talent(AssetID.KingInYellow, AssetTypeID.Item, TalentTypeID.Innate, OnDraw, OnDiscard);
         }
     }
 }

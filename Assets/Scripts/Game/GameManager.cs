@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Board;
+using Cards;
 using Investigators;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
@@ -22,10 +23,15 @@ namespace Game
         public Investigator currentInvestigator;
         public ActionID currentAction = ActionID.None;
 
+        public event EventHandler MoveApplied;
+
         // Start is called before the first frame update
         void Start()
         {
             Screen.SetResolution(2560, 1440, true);
+            AssetsGenerator.Game = this;
+            EncounterGenerator.Game = this;
+            
             investigatorManager.CreateInvestigators();
             FetchStartingInvestigators();
             board.CreateApproachOfAzatothMap();
@@ -237,6 +243,7 @@ namespace Game
         private void ApplyMove()
         {
             board.MoveActionInvestigator();
+            MoveApplied?.Invoke(this, EventArgs.Empty);
         }
 
         private void ApplyGatherResources()
@@ -246,5 +253,11 @@ namespace Game
         }
         
         #endregion
+
+        public void GainClueFromNeighborhood()
+        {
+            currentInvestigator.Clues++;
+            board.Neighborhoods[currentInvestigator.Tile.Location.NeighborhoodID].ClueAmount--;
+        }
     }
 }
