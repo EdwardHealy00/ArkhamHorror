@@ -92,7 +92,7 @@ namespace Board
             {
                 if (selected)
                 {
-                    boardManager.RemoveTilesToMoveAction(this);
+                    boardManager.ResetSelectedTiles();
                     boardManager.ShowHoverPath(this);
                 }
                 else { boardManager.AddTilesToMoveAction(this);}

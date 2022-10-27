@@ -36,8 +36,8 @@ namespace Cards
             {
                 Debug.Log("Becky");
             }
-            void OnDraw() { Game.MoveApplied += Trigger; };
-            void OnDiscard() { Game.MoveApplied -= Trigger; }
+            void OnDraw(Investigator investigator) { investigator.MoveApplied += Trigger; }
+            void OnDiscard(Investigator investigator) { investigator.MoveApplied -= Trigger; }
             
             return new Item(AssetID.Becky, AssetTypeID.Item, ItemTypeID.Weapon, OnDraw, OnDiscard, new Health(2, 3), hands: 2);
         }
@@ -45,10 +45,12 @@ namespace Cards
         {
             void Trigger(object sender, EventArgs e)
             {
+                var investigator = (Investigator) sender;
                 Debug.Log("Handcuffs");
             }
-            void OnDraw() { Game.MoveApplied += Trigger; };
-            void OnDiscard() { Game.MoveApplied -= Trigger; }
+
+            void OnDraw(Investigator investigator) { investigator.MoveApplied += Trigger; }
+            void OnDiscard(Investigator investigator) { investigator.MoveApplied -= Trigger; }
             
             return new Item(AssetID.Handcuffs, AssetTypeID.Item, ItemTypeID.Common, OnDraw, OnDiscard);
         }
@@ -56,10 +58,21 @@ namespace Cards
         {
             void Trigger(object sender, EventArgs e)
             {
+                var investigator = (Investigator) sender;
                 Debug.Log("Motorcycle");
             }
-            void OnDraw() { Game.MoveApplied += Trigger; };
-            void OnDiscard() { Game.MoveApplied -= Trigger; }
+
+            void OnDraw(Investigator investigator)
+            {
+                investigator.MoveLimit = Math.Max(investigator.MoveLimit, 3);
+                investigator.MoveApplied += Trigger;
+            }
+
+            void OnDiscard(Investigator investigator)
+            {
+                investigator.MoveLimit = 2;
+                investigator.MoveApplied -= Trigger;
+            }
 
             return new Item(AssetID.Motorcycle, AssetTypeID.Item, ItemTypeID.Vehicule, OnDraw, OnDiscard);
         }
@@ -69,8 +82,8 @@ namespace Cards
             {
                 Debug.Log("King In Yellow");
             }
-            void OnDraw() { Game.MoveApplied += Trigger; };
-            void OnDiscard() { Game.MoveApplied -= Trigger; }
+            void OnDraw(Investigator investigator) { investigator.MoveApplied += Trigger; }
+            void OnDiscard(Investigator investigator) { investigator.MoveApplied -= Trigger; }
             
             return new Item(AssetID.KingInYellow, AssetTypeID.Item, ItemTypeID.CurioTome, OnDraw, OnDiscard);
         }
@@ -80,8 +93,8 @@ namespace Cards
             {
                 Debug.Log("Analytical Mind");
             }
-            void OnDraw() { Game.MoveApplied += Trigger; };
-            void OnDiscard() { Game.MoveApplied -= Trigger; }
+            void OnDraw(Investigator investigator) { investigator.MoveApplied += Trigger; }
+            void OnDiscard(Investigator investigator) { investigator.MoveApplied -= Trigger; }
             
             return new Talent(AssetID.KingInYellow, AssetTypeID.Item, TalentTypeID.Innate, OnDraw, OnDiscard);
         }
@@ -91,8 +104,8 @@ namespace Cards
             {
                 Debug.Log("SYNERGY");
             }
-            void OnDraw() { Game.MoveApplied += Trigger; };
-            void OnDiscard() { Game.MoveApplied -= Trigger; }
+            void OnDraw(Investigator investigator) { investigator.MoveApplied += Trigger; }
+            void OnDiscard(Investigator investigator) { investigator.MoveApplied -= Trigger; }
             
             return new Talent(AssetID.KingInYellow, AssetTypeID.Item, TalentTypeID.Innate, OnDraw, OnDiscard);
         }

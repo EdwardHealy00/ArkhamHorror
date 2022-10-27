@@ -27,6 +27,7 @@ namespace Game.UI
         private uint focusLimitPerSkill = 2;
         private uint focusAmount = 0;
         private Dictionary<SkillID, Skill> stats;
+        private bool initialized = false;
         
         [HideInInspector] public SkillID SelectedPlusID = SkillID.None;
         [HideInInspector] public SkillID SelectedMinusID = SkillID.None;
@@ -46,12 +47,14 @@ namespace Game.UI
             
             SelectedPlusID = SkillID.None;
             SelectedMinusID = SkillID.None;
+
+            initialized = true;
         }
 
         public void Show()
         {
             gameObject.SetActive(true);
-            Initialize();
+            if(!initialized) Initialize();
             RefreshSkillValues();
             focusLimitLabel.text = focusAmount + "/" + focusLimit;
             if (focusAmount <= focusLimit)
@@ -180,13 +183,13 @@ namespace Game.UI
                 skill.Value.Plus.interactable = investigator.Skills[skill.Key].TimesFocused < investigator.FocusLimitPerSkill;
                 skill.Value.Minus.interactable = investigator.Skills[skill.Key].TimesFocused > 0 && focusAmount > focusLimit;
             }
+            
+            plusToggles.SetAllTogglesOff();
+            minusToggles.SetAllTogglesOff();
 
             focusAmount = investigator.FocusAmount;
             focusLimit = investigator.FocusLimit;
             focusLimitPerSkill = investigator.FocusLimitPerSkill;
-            
-            plusToggles.SetAllTogglesOff();
-            minusToggles.SetAllTogglesOff();
         }
 
         public class SkillElement

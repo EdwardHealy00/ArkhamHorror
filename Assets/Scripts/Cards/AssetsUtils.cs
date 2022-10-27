@@ -42,7 +42,7 @@ namespace Cards
         public int Hands;
         
 
-        public Item(AssetID assetID, AssetTypeID assetTypeID, ItemTypeID itemTypeID, Action onDraw, Action onDiscard, Health? health = null, int cost = 0, int hands = 0)
+        public Item(AssetID assetID, AssetTypeID assetTypeID, ItemTypeID itemTypeID, Action<Investigator> onDraw, Action<Investigator> onDiscard, Health? health = null, int cost = 0, int hands = 0)
         {
             AssetID = assetID;
             AssetTypeID = assetTypeID;
@@ -57,7 +57,7 @@ namespace Cards
     {
         public TalentTypeID TalentTypeID;
 
-        public Talent(AssetID assetID, AssetTypeID assetTypeID, TalentTypeID talentTypeID, Action onDraw, Action onDiscard)
+        public Talent(AssetID assetID, AssetTypeID assetTypeID, TalentTypeID talentTypeID, Action<Investigator> onDraw, Action<Investigator> onDiscard)
         {
             AssetID = assetID;
             AssetTypeID = assetTypeID;
@@ -70,7 +70,7 @@ namespace Cards
         public AllyTypeID AllyTypeID;
         public Health Health;
 
-        public Ally(AssetID assetID, AssetTypeID assetTypeID, AllyTypeID allyTypeID, Health health, Action onDraw, Action onDiscard)
+        public Ally(AssetID assetID, AssetTypeID assetTypeID, AllyTypeID allyTypeID, Health health, Action<Investigator> onDraw, Action<Investigator> onDiscard)
         {
             AssetID = assetID;
             AssetTypeID = assetTypeID;
@@ -84,7 +84,7 @@ namespace Cards
         public SpellTypeID SpellTypeID;
         public int Hands;
 
-        public Spell(AssetID assetID, AssetTypeID assetTypeID, SpellTypeID spellTypeID, int hands, Action onDraw, Action onDiscard)
+        public Spell(AssetID assetID, AssetTypeID assetTypeID, SpellTypeID spellTypeID, int hands, Action<Investigator> onDraw, Action<Investigator> onDiscard)
         {
             AssetID = assetID;
             AssetTypeID = assetTypeID;
@@ -98,7 +98,7 @@ namespace Cards
         public ConditionTypeID ConditionTypeID;
         public int Hands;
 
-        public Condition(AssetID assetID, AssetTypeID assetTypeID, ConditionTypeID conditionTypeID, Action onDraw, Action onDiscard)
+        public Condition(AssetID assetID, AssetTypeID assetTypeID, ConditionTypeID conditionTypeID, Action<Investigator> onDraw, Action<Investigator> onDiscard)
         {
             AssetID = assetID;
             AssetTypeID = assetTypeID;

@@ -35,6 +35,8 @@ namespace Investigators
         
         [HideInInspector]public Tile Tile;
         [HideInInspector] public GameObject Pawn;
+        
+        public event EventHandler MoveApplied;
 
         public Investigator(InvestigatorID investigatorID, Health health, Dictionary<SkillID, Skill> skills, Dictionary<AssetID, Asset> startingPossessions, uint focusLimit, uint dollars)
         {
@@ -44,6 +46,25 @@ namespace Investigators
             Assets = startingPossessions;
             FocusLimit = focusLimit;
             Dollars = dollars;
+        }
+
+        public void MoveTo(Tile tile)
+        {
+            // Remove investigator from current tile
+            Tile.Investigators.Remove(ID);
+            var i = 0;
+            
+            // Offset investigator pawns on current tile since this pawn moves
+            foreach (var inv in Tile.Investigators.Values)
+            {
+                inv.Pawn.transform.position = Tile.CenterPos.position + new Vector3(1 * i, 0, 0);
+                i++;
+            }
+            
+            // Move pawn
+            tile.Investigators[ID] = this;
+            Tile = tile;
+            Pawn.transform.position = tile.CenterPos.position + new Vector3(1 * (tile.Investigators.Count - 1), 0, 0);
         }
 
         public bool CanFocusSkill(SkillID skillId)
@@ -116,6 +137,11 @@ namespace Investigators
             {
                  ActionsDoneThisTurn[actionID] = false;
             }
+        }
+
+        public void InvokeMoveAppliedEvent()
+        {
+            MoveApplied?.Invoke(this, EventArgs.Empty);
         }
     }
 

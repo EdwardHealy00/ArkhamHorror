@@ -399,18 +399,18 @@ namespace Board
             _highlightedPath.Clear();
         }
 
-        public void MoveActionInvestigator()
+        public void MoveInvestigator()
         {
-            if (!_pendingMovePath.Any()) return;
+            if (!_pendingMovePath.Any()) return; // if empty return
         
             var investigator = game.currentInvestigator;
-            var tile = _pendingMovePath.Last();
-            if (tile.ID == investigator.Tile.ID) return;
+            var destination = _pendingMovePath.Last();
+            if (destination.ID == investigator.Tile.ID) return;
 
-            if (ShortestPath(tile).Count <= investigator.MoveLimit)
+            if (ShortestPath(destination).Count <= investigator.MoveLimit)
             {
-                Move(investigator, tile);
-                RemoveTilesToMoveAction(tile);
+                investigator.MoveTo(destination);
+                ResetSelectedTiles();
             }
         }
     
@@ -426,8 +426,8 @@ namespace Board
             }
             ShortestPath = FindShortestPath(destTile);
         }
-    
-        public void RemoveTilesToMoveAction(Tile destTile)
+
+        public void ResetSelectedTiles()
         {
             foreach (var tile in _pendingMovePath)
             {
@@ -435,21 +435,6 @@ namespace Board
             }
             _pendingMovePath.Clear();
             ShortestPath = FindShortestPath(game.currentInvestigator.Tile);
-        }
-
-        private void Move(Investigator investigator, Tile tile)
-        {
-            investigator.Tile.Investigators.Remove(investigator.ID);
-            var i = 0;
-            foreach (var inv in investigator.Tile.Investigators.Values)
-            {
-                inv.Pawn.transform.position = investigator.Tile.CenterPos.position + new Vector3(1 * i, 0, 0);
-                i++;
-            }
-        
-            tile.Investigators[investigator.ID] = investigator;
-            investigator.Tile = tile;
-            investigator.Pawn.transform.position = tile.CenterPos.position + new Vector3(1 * (tile.Investigators.Count - 1), 0, 0);
         }
 
         private void UpdateDoomCounter()

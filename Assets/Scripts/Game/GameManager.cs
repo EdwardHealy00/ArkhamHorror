@@ -23,8 +23,6 @@ namespace Game
         public Investigator currentInvestigator;
         public ActionID currentAction = ActionID.None;
 
-        public event EventHandler MoveApplied;
-
         // Start is called before the first frame update
         void Start()
         {
@@ -242,8 +240,8 @@ namespace Game
         }
         private void ApplyMove()
         {
-            board.MoveActionInvestigator();
-            MoveApplied?.Invoke(this, EventArgs.Empty);
+            board.MoveInvestigator();
+            currentInvestigator.InvokeMoveAppliedEvent();
         }
 
         private void ApplyGatherResources()
@@ -258,6 +256,7 @@ namespace Game
         {
             currentInvestigator.Clues++;
             board.Neighborhoods[currentInvestigator.Tile.Location.NeighborhoodID].ClueAmount--;
+            canvas.RefreshInvestigatorPanel(currentInvestigator);
         }
     }
 }
