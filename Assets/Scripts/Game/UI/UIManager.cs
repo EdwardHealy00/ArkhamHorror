@@ -73,7 +73,7 @@ namespace Game
             foreach (var investigator in investigators.Values)
             {
                 var toggle = Instantiate(portraitPrefab, portraitGroup.transform);
-                toggle.GetComponentInChildren<Image>().sprite = investigator.GetSprite();
+                toggle.GetComponentInChildren<Image>().sprite = InvestigatorUtils.GetSprite(investigator.ID);
                 toggle.group = portraitGroup;
                 toggle.onValueChanged.AddListener((value) => TriggerInvestigatorChange(investigator, value));
                 portaitToggles[investigator.ID] = toggle;

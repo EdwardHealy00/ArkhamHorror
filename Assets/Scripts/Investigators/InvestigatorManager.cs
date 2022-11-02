@@ -19,7 +19,7 @@ namespace Investigators
         {
             Investigators = new Dictionary<InvestigatorID, Investigator>
             {
-                //{InvestigatorID.Dilettante, CreateDilletante()},
+                //{InvestigatorID.Dilettante, CreateDilettante()},
                 //{InvestigatorID.Waitress, CreateWaitress()},
                 //{InvestigatorID.Entertainer, CreateEntertainer()},
                 //{InvestigatorID.Mobster, CreateMobster()},
@@ -91,7 +91,7 @@ namespace Investigators
             throw new System.NotImplementedException();
         }
 
-        private Investigator CreateDilletante()
+        private Investigator CreateDilettante()
         {
             throw new System.NotImplementedException();
         }

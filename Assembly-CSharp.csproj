@@ -93,6 +93,9 @@
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
      <Compile Include="Assets\Scripts\Game\UI\ButtonHandlers\EndTurnBtnHandler.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
+     <Compile Include="Assets\Scripts\Monsters\Monster.cs" />
+     <Compile Include="Assets\Scripts\Monsters\MonsterGenerator.cs" />
+     <Compile Include="Assets\Scripts\Monsters\MonsterUtils.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Investigators
 {
@@ -81,6 +82,28 @@ namespace Investigators
                 "Strength" => SkillID.Strength,
                 "Will" => SkillID.Will,
                 _ => throw new ArgumentOutOfRangeException(nameof(name), name, null)
+            };
+        }
+        
+        public static Sprite GetSprite(InvestigatorID id)
+        {
+            var sprites4 = Resources.LoadAll<Sprite>("Sprites/Characters/4chars");
+            var sprites8 = Resources.LoadAll<Sprite>("Sprites/Characters/4chars");
+            return id switch
+            {
+                InvestigatorID.Magician => sprites4[0],
+                InvestigatorID.Astronomer => sprites4[1],
+                InvestigatorID.Mobster => sprites4[2],
+                InvestigatorID.Entertainer => sprites4[3],
+                InvestigatorID.Dilettante => sprites8[0],
+                InvestigatorID.Mechanic => sprites8[1],
+                InvestigatorID.Reporter => sprites8[2],
+                InvestigatorID.RookieCop => sprites8[3],
+                InvestigatorID.Haunted => sprites8[4],
+                InvestigatorID.Waitress => sprites8[5],
+                InvestigatorID.Urchin => sprites8[6],
+                InvestigatorID.Secretary => sprites8[7],
+                _ => throw new ArgumentOutOfRangeException()
             };
         }
     }

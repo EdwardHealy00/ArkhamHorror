@@ -27,6 +27,7 @@ namespace Investigators
         public uint ActionLimit = 2;
         public uint minRollForSuccess = 5;
         public bool isEngaged = false;
+        public bool isDelayed = false;
         [HideInInspector] public uint ActionsLeftThisTurn = 1;
         #region ActionsDoneThisTurn 
         [HideInInspector] public Dictionary<ActionID, bool> ActionsDoneThisTurn = new Dictionary<ActionID, bool>   {{ActionID.Move, false}, {ActionID.GatherResources, false}, {ActionID.Attack, false}, {ActionID.Evade, false}, {ActionID.Research, false}, {ActionID.Ward, false}, {ActionID.Trade, false}, {ActionID.Focus, false}}; 
@@ -96,25 +97,6 @@ namespace Investigators
             {
                 Debug.LogError("Tried to unfocus unfocused skill");
             }
-        }
-        public Sprite GetSprite()
-        {
-            return ID switch
-            {
-                InvestigatorID.Magician => Resources.LoadAll<Sprite>("Sprites/Characters/4chars")[0],
-                InvestigatorID.Astronomer => Resources.LoadAll<Sprite>("Sprites/Characters/4chars")[1],
-                InvestigatorID.Mobster => Resources.LoadAll<Sprite>("Sprites/Characters/4chars")[2],
-                InvestigatorID.Entertainer => Resources.LoadAll<Sprite>("Sprites/Characters/4chars")[3],
-                InvestigatorID.Dilettante => Resources.LoadAll<Sprite>("Sprites/Characters/8chars")[0],
-                InvestigatorID.Mechanic => Resources.LoadAll<Sprite>("Sprites/Characters/8chars")[1],
-                InvestigatorID.Reporter => Resources.LoadAll<Sprite>("Sprites/Characters/8chars")[2],
-                InvestigatorID.RookieCop => Resources.LoadAll<Sprite>("Sprites/Characters/8chars")[3],
-                InvestigatorID.Haunted => Resources.LoadAll<Sprite>("Sprites/Characters/8chars")[4],
-                InvestigatorID.Waitress => Resources.LoadAll<Sprite>("Sprites/Characters/8chars")[5],
-                InvestigatorID.Urchin => Resources.LoadAll<Sprite>("Sprites/Characters/8chars")[6],
-                InvestigatorID.Secretary => Resources.LoadAll<Sprite>("Sprites/Characters/8chars")[7],
-                _ => throw new ArgumentOutOfRangeException()
-            };
         }
 
         public uint DoTest(SkillID skill)

@@ -59,10 +59,10 @@ namespace Board
 
         public void SpawnInvestigators(Dictionary<InvestigatorID, Investigator> investigators)
         {
-            foreach (var (_, investigator) in investigators)
+            foreach (var (id, investigator) in investigators)
             {
                 var pawn = Instantiate(investigatorPrefab, startingTile.CenterPos);
-                pawn.GetComponent<SpriteRenderer>().sprite = investigator.GetSprite();
+                pawn.GetComponent<SpriteRenderer>().sprite = InvestigatorUtils.GetSprite(id);
                 investigator.Pawn = pawn;
             }
         }
